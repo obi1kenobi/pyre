@@ -17,9 +17,11 @@ exploited as the first command-line parameter.
 
 def main():
     if len(sys.argv) >= 2:
-        IP = sys.argv[1]
+        ip = sys.argv[1]
+    else:
+        ip = IP
 
-    r = remote.AirHID_Remote(IP, PORT)
+    r = remote.AirHID_Remote(ip, PORT)
     test_open_start_menu(r)
     test_open_url(r)
 

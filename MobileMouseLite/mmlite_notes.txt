@@ -10,6 +10,8 @@ command formats:
   left click, mouse up: "CLICK[SEP]L[SEP]U[SEP][END]"
   right click, mouse down: "CLICK[SEP]R[SEP]D[SEP][END]"
   right click, mouse up: "CLICK[SEP]R[SEP]U[SEP][END]"
-  press key: 
-  release key: 
-  press key combo: 
+  press key: "KEY[SEP]-1[SEP]<c>[SEP][END]", where <c> is an ascii char
+  release key: automatic after press
+  press key combo: "KEY[SEP]-1[SEP]<c>[SEP]<keys>[SEP][END]", where <c> is an ascii char and <keys> is a string like "SHIFT+CTRL+ALT"
+  action keys:
+    

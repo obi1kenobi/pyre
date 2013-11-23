@@ -84,7 +84,6 @@ class RemoteControlCollectionDriver:
 
         if protocol == "udp":
             self._socket_udp.sendto(data, (self._ip, self._udp_port))
-            self._socket_udp.close()
         else:
             self._socket_tcp.send(data)
 

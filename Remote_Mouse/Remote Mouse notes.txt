@@ -1,0 +1,43 @@
+port: 1978 for TCP, 2008 for UDP
+protocol: TCP default
+encoding: ascii
+
+command formats:
+  move mouse by (-3, 5): "mos  m -3 5"
+  left click, mouse down: "mos  5R l d"
+  left click, mouse up: "mos  5R l u"
+  middle click, mouse down: "mos  5R m d"
+  middle click, mouse up: "mos  5R m u"
+  right click, mouse down: "mos  5R r d"
+  right click, mouse up: "mos  5R r u"
+  scroll wheel down: "mos  3w 0"
+  scroll wheel up: "mos  3w 1"
+  press key: "key  SL" where L = "[ras]<kc>", <kc> is the ascii key code xor 53, and S = L.length
+  release key: automatic after press
+  press key combo: "shift[+]c" to press Shift+C
+    modifier names: "shift", "alt", "ctrl", limit 1 per command
+  action keys:
+    "RTN" - enter
+    "BAS" - backspace
+    "esc"
+    "home"
+    "end"
+    "tab"
+    "pageup"
+    "pagedown"
+    "UP"
+    "DW"
+    "LF"
+    "RT"
+    "F1"
+    "F2"
+    "F3"
+    "F4"
+    "F5"
+    "F6"
+    "F7"
+    "F8"
+    "F9"
+    "F10"
+    "F11"
+    "F12"

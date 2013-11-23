@@ -147,14 +147,27 @@ class AirHidDriver:
         ':': VK_SEMICOLON
     }
 
-    def __init__(self, ip, port):
+    INPUT_PORT = 13246
+    SERVER_PORT = 13246
+
+    def __init__(self, ip):
         self._ip = ip
-        self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self._port = port
+        self._output_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._input_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._input_socket.settimeout(2)
+        self._input_socket.bind(('', AirHidDriver.INPUT_PORT))
+
+    def _listen_for_replies(self):
+        try:
+            data, addr = self._input_socket.recvfrom(1024)
+            print "%s replied: %s" % (addr, data)
+            return True
+        except:
+            return False
 
     def _send(self, data):
         print "sending: " + data
-        self._socket.sendto(data, (self._ip, self._port))
+        self._output_socket.sendto(data, (self._ip, AirHidDriver.SERVER_PORT))
 
     def _vkey_to_airhid_button_code(self, vkey):
         if vkey in AirHidDriver.TRANSLATION_TABLE:
@@ -198,7 +211,7 @@ class AirHidDriver:
         return self
 
     def open_url(self, url):
-        self._send("url."+url)
+        self._send("url." + url)
         return self
 
     def type(self, text):
@@ -211,6 +224,9 @@ class AirHidDriver:
         return self
 
     def press_action_key(self, name, shift=False, ctrl=False, alt=False):
+        if name not in AirHidDriver.ACTION_KEYS:
+            raise ValueError('Unknown action key name: %s' % name)
+
         format = "cmd."
         command = str(AirHidDriver.ACTION_KEYS[name])
         if shift:
@@ -219,10 +235,9 @@ class AirHidDriver:
             command += AirHidDriver.CTRL
         if alt:
             command += AirHidDriver.ALT
+        return self
 
-        if name in AirHidDriver.ACTION_KEYS:
-            self._send(format + command)
-            self._send(format + command + "_UP")
-            return self
-        else:
-            raise ValueError('Unknown action key name: %s' % name)
+    def ping(self):
+        format = "from:airhid"
+        self._send(format)
+        return self._listen_for_replies()

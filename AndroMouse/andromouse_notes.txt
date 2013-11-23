@@ -1,0 +1,10 @@
+port: defaults to 8888, but I believe it can be changed
+protocol: UDP
+
+command formats:
+  move mouse by (-3, 5): "-3x5yMVEX"
+  left click: "click"
+  right click: "rtclk"
+  press key: 
+  release key: 
+  press key combo: 

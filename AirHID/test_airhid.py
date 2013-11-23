@@ -43,7 +43,7 @@ def test_open_url(r):
     r.open_url("http://www.yahoo.com/")
     sleep(1.5)
     r.press_action_key("TAB", shift=True)
-    sleep(4)
+    sleep(3)
     r.press_action_key("F4")
     sleep(0.2)
     r.type("www.google.com\n")

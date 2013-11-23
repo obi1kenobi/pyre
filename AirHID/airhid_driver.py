@@ -235,6 +235,8 @@ class AirHidDriver:
             command += AirHidDriver.CTRL
         if alt:
             command += AirHidDriver.ALT
+        print "action key: "
+        self._send(format + command)
         return self
 
     def ping(self):

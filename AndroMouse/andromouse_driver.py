@@ -26,5 +26,31 @@ class AndroMouseDriver:
 
     def type(self, text):
         for c in text:
-            self._send(c)
+            # special cases
+            if c == ":":
+                # hold down shift key and press semicolon
+                self._send("ShiftKDwn")
+                self._send(";")
+                self._send("ShiftKU")
+            else:
+                self._send(c)
+        return self
+
+    def press_action_key(self, key, shift=False, ctrl=False, alt=False):
+        if shift:
+            self._send("ShiftKDwn")
+        if ctrl:
+            self._send("CtrlKDwn")
+        if alt:
+            self._send("AltKDwn")
+
+        self._send(key)
+
+        if shift:
+            self._send("ShiftKU")
+        if ctrl:
+            self._send("CtrlKU")
+        if alt:
+            self._send("AltKU")
+
         return self

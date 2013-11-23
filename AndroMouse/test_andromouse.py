@@ -34,20 +34,26 @@ def main():
 
 def clean_environment(r):
     r.move_mouse(-2000,-2000)
+    sleep(2)
 
 """
 Demonstrates that we can both open an arbitrary page in the default browser and
-use the browser itself by navigating to another page. F4 shortcut is IE-specific.
+use the browser itself by navigating to another page.
 """
 def test_open_url(r):
-    # r.open_url("http://www.yahoo.com/")
-    # sleep(1)
-    # r.press_action_key("TAB", shift=True)
-    # sleep(4)
-    # r.press_action_key("F4")
-    # sleep(0.2)
-    # r.type("www.google.com\n")
-    pass
+    r.move_mouse(-2000,2000).left_click()
+    sleep(0.5)
+    r.type('internet explorer\n')
+    sleep(20)
+    r.type("a") # window focus?
+    sleep(2)
+    r.press_action_key("l", ctrl=True)
+    sleep(2)
+    r.type("http://www.yahoo.com/\n")
+    sleep(6)
+    r.press_action_key("l", ctrl=True)
+    sleep(2)
+    r.type("www.google.com\n")
 
 """
 Demonstrates that we can download an arbitrary file from the Internet and
@@ -55,7 +61,7 @@ execute it.
 """
 def test_powershell(r):
     r.move_mouse(-2000,2000).left_click()
-    sleep(0.5)
+    sleep(2)
     r.type('powershell\n')
     sleep(4)
     r.type('$c = new-object System.Net.WebClient\n') \

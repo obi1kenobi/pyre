@@ -3,6 +3,40 @@ import string
 from time import sleep
 
 class RemoteControlCollectionDriver:
+
+    RCC_ESC = "<esc>"
+    RCC_TAB = "<tab>"
+    RCC_UP = "<up>"
+    RCC_DOWN = "<down>"
+    RCC_LEFT = "<left>"
+    RCC_RIGHT = "<right>"
+    RCC_DEL = "<del>"
+    RCC_BACKSPACE = "<Back>"
+    RCC_SHIFT_DOWN = "<shift>down"
+    RCC_SHIFT_UP = "<shift>up"
+    RCC_ENTER = "<Enter>"
+    RCC_CTRL_DOWN = "<ctrl>down"
+    RCC_CTRL_UP = "<ctrl>up"
+    RCC_ALT_DOWN = "<alt>down"
+    RCC_ALT_UP = "<alt>up"
+    RCC_WIN = "<win>"
+
+    ACTION_KEYS = {
+        'TAB': RCC_TAB,
+        'ENTER': RCC_ENTER,
+        'LEFT': RCC_LEFT,
+        'UP': RCC_UP,
+        'RIGHT': RCC_RIGHT,
+        'DOWN': RCC_DOWN,
+        'BACK_SPACE': RCC_BACKSPACE,
+        'DELETE': RCC_DEL
+    }
+
+    KEY_MAPPINGS = {
+        '\n': RCC_ENTER
+    }
+
+
     def __init__(self, ip, udp_port, tcp_port):
         self._ip = ip
         self._socket_udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -11,6 +45,8 @@ class RemoteControlCollectionDriver:
         self._tcp_port = tcp_port
 
         self._socket_tcp.connect((self._ip, self._tcp_port))
+        self._socket_udp.setblocking(0)
+        self._socket_tcp.setblocking(0)
 
     def _build_command(self, command, *args):
         prefix_bytes = [128, 21]
@@ -32,6 +68,8 @@ class RemoteControlCollectionDriver:
             bytes.append(4)
         elif command == "mouse_release":
             bytes.append(1)
+        elif command == "end_string":
+            bytes = [128, 10]
 
         if args:
             bytes.extend(args)
@@ -42,12 +80,16 @@ class RemoteControlCollectionDriver:
 
 
     def _send(self, data, protocol="udp"):
-        print "sending: " + data
+        # print "sending: " + data
 
         if protocol == "udp":
             self._socket_udp.sendto(data, (self._ip, self._udp_port))
+            self._socket_udp.close()
         else:
             self._socket_tcp.send(data)
+
+    def _get_char_code(self, c):
+        return RemoteControlCollectionDriver.KEY_MAPPINGS.get(c, c)
 
     def left_click(self):
         self._send(self._build_command("left_click_down"), protocol="tcp")
@@ -59,19 +101,11 @@ class RemoteControlCollectionDriver:
         return self
 
     def scroll_up(self, ticks=1):
-        scroll_up_command = self._build_command("scroll", 0, 0)
-
-        for i in range(ticks):
-            self._send(scroll_up_command)
-
+        self._send("[cmd_scroll]pageup", protocol="tcp")
         return self
 
     def scroll_down(self, ticks=1):
-        scroll_command = self._build_command("scroll", 0, 128)
-
-        for i in range(ticks):
-            self._send(scroll_command)
-
+        self._send("[cmd_scroll]pagedown", protocol="tcp")
         return self
 
     def move_mouse(self, deltaX, deltaY):
@@ -111,24 +145,11 @@ class RemoteControlCollectionDriver:
 
     def type(self, text):
         for c in text:
-            self._send("[cmd_keyboard]%s" % c)
-            sleep(0.0001)
+            self._send("[cmd_keyboard]%s" % self._get_char_code(c))
+        
+        # self._send(self._build_command("end_string"), protocol="tcp")
 
         return self
 
     def press_action_key(self, name, shift=False, ctrl=False, alt=False):
-        format = "cmd."
-        command = str(AirHidDriver.ACTION_KEYS[name])
-        if shift:
-            command += AirHidDriver.SHIFT
-        if ctrl:
-            command += AirHidDriver.CTRL
-        if alt:
-            command += AirHidDriver.ALT
-
-        if name in AirHidDriver.ACTION_KEYS:
-            self._send(format + command)
-            self._send(format + command + "_UP")
-            return self
-        else:
-            raise ValueError('Unknown action key name: %s' % name)
+        pass

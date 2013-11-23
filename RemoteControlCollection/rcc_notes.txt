@@ -1,0 +1,16 @@
+port: 1926, 1927
+protocol: UDP
+encoding: UTF-8
+
+command formats:
+  move mouse by (-3, 5): "pos.-3,5"
+  left click, mouse down: 3 bytes of [128, 21, 6]
+  left click, mouse up: "clk.1_UP"
+  right click, mouse down: "clk.2_DOWN"
+  right click, mouse up: "clk.2_UP"
+  scroll wheel down: 5 bytes, [128, 21, 9, 0, Y_pos]
+  scroll wheel up: 5 bytes, [128, 21, 9, 0, Y_pos]
+  press key: "[cmd_keyboard]<kc>" where <kc> is key code
+  release key: "cmd.<kc>_UP"
+  press key combo: "cmd.<kc>_SHIFT_ALT_CTRL_WIN" where <kc> is key code
+    modifiers are _SHIFT etc, in any order

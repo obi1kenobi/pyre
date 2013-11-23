@@ -1,0 +1,912 @@
+// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
+// Jad home page: http://www.kpdus.com/jad.html
+// Decompiler options: packimports(3) 
+
+package com.steppschuh.remotecontrolcollection.helper;
+
+import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.*;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.*;
+import android.text.format.Formatter;
+import android.util.Log;
+import com.steppschuh.remotecontrolcollection.Server;
+import java.io.*;
+import java.net.*;
+import java.util.List;
+
+// Referenced classes of package com.steppschuh.remotecontrolcollection.helper:
+//            DataHelper, UiHelper
+
+public class NetworkHelper
+{
+    public class GetTcpCommandTask extends AsyncTask
+    {
+
+        protected volatile Object doInBackground(Object aobj[])
+        {
+            return doInBackground((Integer[])aobj);
+        }
+
+        protected transient byte[][] doInBackground(Integer ainteger[])
+        {
+            byte abyte0[];
+            byte abyte1[];
+            Socket socket;
+            (byte[][])null;
+            abyte0 = null;
+            abyte1 = null;
+            socket = null;
+            ServerSocket serversocket = new ServerSocket(1927);
+            ServerSocket serversocket1 = serversocket;
+_L1:
+            byte abyte2[];
+            serversocket1.setSoTimeout(ainteger[0].intValue());
+            socket = serversocket1.accept();
+            abyte2 = DataHelper.encodeUTF8(socket.getInetAddress().toString());
+            abyte1 = abyte2;
+            byte abyte3[] = DataHelper.inputStreamToByte(socket.getInputStream());
+            abyte0 = abyte3;
+_L3:
+            socket.close();
+            Exception exception5;
+            try
+            {
+                serversocket1.close();
+            }
+            catch(Exception exception2)
+            {
+                exception2.printStackTrace();
+            }
+_L2:
+            return (new byte[][] {
+                abyte0, abyte1
+            });
+            exception5;
+            exception5.printStackTrace();
+            serversocket1 = null;
+              goto _L1
+            Exception exception3;
+            exception3;
+            serversocket1.close();
+              goto _L2
+            Exception exception1;
+            exception1;
+            serversocket1.close();
+            throw exception1;
+            Exception exception;
+            exception;
+            abyte0 = null;
+            abyte1 = null;
+              goto _L3
+            Exception exception4;
+            exception4;
+            abyte0 = null;
+              goto _L3
+        }
+
+        final NetworkHelper this$0;
+
+        public GetTcpCommandTask()
+        {
+            this$0 = NetworkHelper.this;
+            super();
+        }
+    }
+
+    public class GetTcpImageTask extends AsyncTask
+    {
+
+        protected transient Bitmap doInBackground(Integer ainteger[])
+        {
+            Bitmap bitmap;
+            Socket socket;
+            bitmap = null;
+            socket = null;
+            ServerSocket serversocket = new ServerSocket(1927);
+            ServerSocket serversocket1 = serversocket;
+_L1:
+            Socket socket1;
+            serversocket1.setSoTimeout(ainteger[0].intValue());
+            socket1 = serversocket1.accept();
+            socket = socket1;
+            InputStream inputstream = socket.getInputStream();
+            Bitmap bitmap2 = BitmapFactory.decodeStream(inputstream);
+            bitmap = bitmap2;
+_L2:
+            socket.close();
+            IOException ioexception1;
+            try
+            {
+                serversocket1.close();
+            }
+            catch(Exception exception1)
+            {
+                exception1.printStackTrace();
+                return bitmap;
+            }
+            return bitmap;
+            ioexception1;
+            ioexception1.printStackTrace();
+            serversocket1 = null;
+              goto _L1
+            OutOfMemoryError outofmemoryerror;
+            outofmemoryerror;
+            Bitmap bitmap1;
+            Log.e("rcc", "Out of memory, compressing bitmap");
+            android.graphics.BitmapFactory.Options options = new android.graphics.BitmapFactory.Options();
+            options.inSampleSize = 2;
+            bitmap1 = BitmapFactory.decodeStream(inputstream, null, options);
+            bitmap = bitmap1;
+              goto _L2
+            Exception exception2;
+            exception2;
+            serversocket1.close();
+            return bitmap;
+            Exception exception;
+            exception;
+            serversocket1.close();
+            throw exception;
+            IOException ioexception;
+            ioexception;
+            bitmap = null;
+              goto _L2
+            Exception exception3;
+            exception3;
+            bitmap = null;
+              goto _L2
+        }
+
+        protected volatile Object doInBackground(Object aobj[])
+        {
+            return doInBackground((Integer[])aobj);
+        }
+
+        final NetworkHelper this$0;
+
+        public GetTcpImageTask()
+        {
+            this$0 = NetworkHelper.this;
+            super();
+        }
+    }
+
+    public class SendBroadcastTask extends AsyncTask
+    {
+
+        protected volatile Object doInBackground(Object aobj[])
+        {
+            return doInBackground((String[][])aobj);
+        }
+
+        protected transient String doInBackground(String as[][])
+        {
+            try
+            {
+                byte abyte0[] = DataHelper.encodeUTF8((new StringBuilder()).append("[cmd_broadcast]").append(app_ip).toString());
+                InetAddress inetaddress = InetAddress.getByName("255.255.255.255");
+                DatagramPacket datagrampacket = new DatagramPacket(abyte0, abyte0.length, inetaddress, 1926);
+                DatagramSocket datagramsocket = new DatagramSocket();
+                datagramsocket.send(datagrampacket);
+                datagramsocket.close();
+            }
+            catch(Exception exception)
+            {
+                exception.printStackTrace();
+                return null;
+            }
+            return null;
+        }
+
+        final NetworkHelper this$0;
+
+        public SendBroadcastTask()
+        {
+            this$0 = NetworkHelper.this;
+            super();
+        }
+    }
+
+    public class SendTcpByteTask extends AsyncTask
+    {
+
+        protected transient Boolean doInBackground(byte abyte0[][])
+        {
+            return NetworkHelper.sendTcpByte(server_ip, abyte0);
+        }
+
+        protected volatile Object doInBackground(Object aobj[])
+        {
+            return doInBackground((byte[][])aobj);
+        }
+
+        final NetworkHelper this$0;
+
+        public SendTcpByteTask()
+        {
+            this$0 = NetworkHelper.this;
+            super();
+        }
+    }
+
+    public class SendUdpByteTask extends AsyncTask
+    {
+
+        protected transient Boolean doInBackground(byte abyte0[][])
+        {
+            int i;
+            Boolean.valueOf(false);
+            i = 0;
+_L2:
+            if(i >= abyte0.length)
+                break; /* Loop/switch isn't completed */
+            byte abyte1[] = abyte0[i];
+            InetAddress inetaddress = InetAddress.getByName(server_ip);
+            DatagramPacket datagrampacket = new DatagramPacket(abyte1, abyte1.length, inetaddress, 1926);
+            DatagramSocket datagramsocket = new DatagramSocket();
+            datagramsocket.send(datagrampacket);
+            datagramsocket.close();
+            i++;
+            if(true) goto _L2; else goto _L1
+_L1:
+            Boolean boolean2 = Boolean.valueOf(true);
+            return boolean2;
+            Exception exception2;
+            exception2;
+            Boolean boolean1 = Boolean.valueOf(false);
+            return boolean1;
+            Exception exception;
+            exception;
+            try
+            {
+                throw exception;
+            }
+            catch(Exception exception1)
+            {
+                exception1.printStackTrace();
+            }
+            return Boolean.valueOf(false);
+        }
+
+        protected volatile Object doInBackground(Object aobj[])
+        {
+            return doInBackground((byte[][])aobj);
+        }
+
+        final NetworkHelper this$0;
+
+        public SendUdpByteTask()
+        {
+            this$0 = NetworkHelper.this;
+            super();
+        }
+    }
+
+    public class getWebRequestTask extends AsyncTask
+    {
+
+        protected volatile Object doInBackground(Object aobj[])
+        {
+            return doInBackground((String[][])aobj);
+        }
+
+        protected transient String doInBackground(String as[][])
+        {
+            request_url = as[0][0];
+            String s;
+            try
+            {
+                s = getRequest(request_url);
+            }
+            catch(IOException ioexception)
+            {
+                return "Unable to retrieve web page. URL may be invalid.";
+            }
+            return s;
+        }
+
+        String request_type;
+        String request_url;
+        final NetworkHelper this$0;
+
+        public getWebRequestTask()
+        {
+            this$0 = NetworkHelper.this;
+            super();
+        }
+    }
+
+
+    public NetworkHelper()
+    {
+        isConnected = false;
+        commands_sent = 0;
+    }
+
+    public static String getCurrentIpAddress(Application application, boolean flag)
+    {
+        String s;
+        if(((ConnectivityManager)application.getSystemService("connectivity")).getNetworkInfo(1).isAvailable())
+        {
+            s = Formatter.formatIpAddress(((WifiManager)application.getSystemService("wifi")).getConnectionInfo().getIpAddress());
+        } else
+        {
+            s = null;
+            if(flag)
+                return null;
+        }
+        return s;
+    }
+
+    public static String getCurrentSsid(Context context)
+    {
+        boolean flag = ((ConnectivityManager)context.getSystemService("connectivity")).getNetworkInfo(1).isConnected();
+        String s = null;
+        if(flag)
+        {
+            WifiInfo wifiinfo = ((WifiManager)context.getSystemService("wifi")).getConnectionInfo();
+            s = null;
+            if(wifiinfo != null)
+                s = wifiinfo.getSSID();
+        }
+        return s;
+    }
+
+    private String getRequest(String s)
+        throws IOException
+    {
+        InputStream inputstream = null;
+        String s1;
+        HttpURLConnection httpurlconnection = (HttpURLConnection)(new URL(s)).openConnection();
+        httpurlconnection.setReadTimeout(10000);
+        httpurlconnection.setConnectTimeout(15000);
+        httpurlconnection.setRequestMethod("GET");
+        httpurlconnection.setDoInput(true);
+        httpurlconnection.connect();
+        inputstream = httpurlconnection.getInputStream();
+        s1 = DataHelper.inputStreamToString(inputstream);
+        if(inputstream != null)
+            inputstream.close();
+        return s1;
+        Exception exception1;
+        exception1;
+        exception1.printStackTrace();
+        if(inputstream != null)
+            inputstream.close();
+        return null;
+        Exception exception;
+        exception;
+        if(inputstream != null)
+            inputstream.close();
+        throw exception;
+    }
+
+    public static boolean isConnectedToWiFi(Application application)
+    {
+        String s = getCurrentSsid(application);
+        if(s != null)
+        {
+            Log.d("rcc", (new StringBuilder()).append("WiFi available, connected to ").append(s).toString());
+            return true;
+        } else
+        {
+            Log.d("rcc", "WiFi not available");
+            return false;
+        }
+    }
+
+    public static boolean isValidServerIp(String s)
+    {
+        while(s == null || s.length() < 1) 
+            return false;
+        try
+        {
+            InetAddress.getByName(s);
+        }
+        catch(Exception exception)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isValidServerName(String s)
+    {
+        while(s == null || s.length() < 1) 
+            return false;
+        return true;
+    }
+
+    public static void openWebsite(String s, Activity activity)
+    {
+        Intent intent = new Intent("android.intent.action.VIEW");
+        intent.setData(Uri.parse(s));
+        activity.startActivity(intent);
+    }
+
+    public static transient Boolean sendTcpByte(String s, byte abyte0[][])
+    {
+        Socket socket;
+        Boolean.valueOf(false);
+        DataOutputStream dataoutputstream;
+        int i;
+        Exception exception2;
+        Boolean boolean1;
+        Boolean boolean2;
+        try
+        {
+            InetAddress inetaddress = InetAddress.getByName(s);
+            socket = new Socket();
+            socket.setSendBufferSize(1024);
+            socket.connect(new InetSocketAddress(inetaddress, 1925), 700);
+        }
+        catch(Exception exception)
+        {
+            return Boolean.valueOf(false);
+        }
+        dataoutputstream = new DataOutputStream(socket.getOutputStream());
+        i = 0;
+_L2:
+        if(i >= abyte0.length)
+            break; /* Loop/switch isn't completed */
+        dataoutputstream.write(abyte0[i]);
+        i++;
+        if(true) goto _L2; else goto _L1
+_L1:
+        boolean2 = Boolean.valueOf(true);
+        socket.close();
+        return boolean2;
+        exception2;
+        boolean1 = Boolean.valueOf(false);
+        socket.close();
+        return boolean1;
+        Exception exception1;
+        exception1;
+        socket.close();
+        throw exception1;
+    }
+
+    public void findServerAsync(final List servers, final Handler mHandler)
+    {
+        (new Thread() {
+
+            public void run()
+            {
+                Boolean boolean1 = Boolean.valueOf(false);
+                int i;
+                int j;
+                i = 0;
+                j = 0;
+_L2:
+                if(j >= servers.size())
+                    break MISSING_BLOCK_LABEL_90;
+                i = j;
+                server_ip = ((Server)servers.get(i)).ip;
+                String s = server_ip;
+                byte abyte0[][] = new byte[1][];
+                abyte0[0] = NetworkHelper.cmd_request_connect;
+                boolean1 = NetworkHelper.sendTcpByte(s, abyte0);
+                if(!boolean1.booleanValue())
+                    break MISSING_BLOCK_LABEL_167;
+                if(boolean1.booleanValue())
+                {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("server", i);
+                    Message message = new Message();
+                    message.setData(bundle);
+                    mHandler.sendMessage(message);
+                    return;
+                }
+                try
+                {
+                    mHandler.sendEmptyMessage(0);
+                    return;
+                }
+                catch(Exception exception)
+                {
+                    exception.printStackTrace();
+                }
+                mHandler.sendEmptyMessage(0);
+                return;
+                j++;
+                if(true) goto _L2; else goto _L1
+_L1:
+            }
+
+            final NetworkHelper this$0;
+            final Handler val$mHandler;
+            final List val$servers;
+
+            
+            {
+                this$0 = NetworkHelper.this;
+                servers = list;
+                mHandler = handler;
+                super();
+            }
+        }
+).start();
+    }
+
+    public void getTcpBitmap(Handler handler)
+    {
+        try
+        {
+            GetTcpImageTask gettcpimagetask = new GetTcpImageTask();
+            Integer ainteger[] = new Integer[1];
+            ainteger[0] = Integer.valueOf(1000);
+            Bitmap bitmap = (Bitmap)gettcpimagetask.execute(ainteger).get();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("bmp", bitmap);
+            Message message = new Message();
+            message.setData(bundle);
+            handler.sendMessage(message);
+            return;
+        }
+        catch(Exception exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
+    public void getWebRequest(final String url, final Handler mHandler)
+    {
+        (new Thread() {
+
+            public void run()
+            {
+                try
+                {
+                    String s = getRequest(url);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("result", s);
+                    Message message = new Message();
+                    message.setData(bundle);
+                    mHandler.sendMessage(message);
+                    return;
+                }
+                catch(Exception exception)
+                {
+                    mHandler.sendEmptyMessage(0);
+                }
+            }
+
+            final NetworkHelper this$0;
+            final Handler val$mHandler;
+            final String val$url;
+
+            
+            {
+                this$0 = NetworkHelper.this;
+                url = s;
+                mHandler = handler;
+                super();
+            }
+        }
+).start();
+    }
+
+    public byte[][] receiveTcpCommand()
+    {
+        byte abyte0[][] = (byte[][])null;
+        byte abyte1[][];
+        try
+        {
+            GetTcpCommandTask gettcpcommandtask = new GetTcpCommandTask();
+            Integer ainteger[] = new Integer[1];
+            ainteger[0] = Integer.valueOf(2000);
+            abyte1 = (byte[][])gettcpcommandtask.execute(ainteger).get();
+        }
+        catch(Exception exception)
+        {
+            exception.printStackTrace();
+            return abyte0;
+        }
+        return abyte1;
+    }
+
+    public void receiveTcpCommandAsync(final Handler mHandler)
+    {
+        (new Thread() {
+
+            public void run()
+            {
+                Bundle bundle;
+                String s;
+                byte abyte0[][] = receiveTcpCommand();
+                bundle = new Bundle();
+                bundle.putByteArray("cmd", abyte0[0]);
+                s = DataHelper.decodeUTF8(abyte0[1]);
+                String s1 = s;
+                String s2 = s1.replace("/", "");
+                s1 = s2;
+_L2:
+                try
+                {
+                    bundle.putString("ip", s1);
+                    Message message = new Message();
+                    message.setData(bundle);
+                    mHandler.sendMessage(message);
+                    return;
+                }
+                catch(Exception exception)
+                {
+                    mHandler.sendEmptyMessage(0);
+                }
+                return;
+                Exception exception1;
+                exception1;
+                if(true) goto _L2; else goto _L1
+_L1:
+            }
+
+            final NetworkHelper this$0;
+            final Handler val$mHandler;
+
+            
+            {
+                this$0 = NetworkHelper.this;
+                mHandler = handler;
+                super();
+            }
+        }
+).start();
+    }
+
+    public void sendBroadcast()
+    {
+        try
+        {
+            (new SendBroadcastTask()).execute(new String[][] {
+                new String[0]
+            });
+            return;
+        }
+        catch(Exception exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
+    public boolean sendConnectCommand()
+    {
+        return sendTcpRetry(2, new byte[][] {
+            new byte[] {
+                -128, 10
+            }
+        });
+    }
+
+    public boolean sendConnectPackage(Application application)
+    {
+        boolean flag = sendConnectCommand();
+        if(flag)
+        {
+            byte abyte0[] = DataHelper.encodeUTF8((new StringBuilder()).append("[cmd_15]").append(DataHelper.getDeviceName()).toString());
+            byte abyte1[] = DataHelper.encodeUTF8((new StringBuilder()).append("[cmd_16]").append(DataHelper.getDeviceOs()).toString());
+            byte abyte2[] = DataHelper.encodeUTF8((new StringBuilder()).append("[cmd_17]").append(application.getString(0x7f050001)).toString());
+            byte abyte3[] = DataHelper.encodeUTF8((new StringBuilder()).append("[cmd_18]").append(DataHelper.getAppVersion(application)).toString());
+            byte abyte4[] = DataHelper.encodeUTF8("[cmd_19]Pro");
+            sendTcpRetryAsync(2, new byte[][] {
+                abyte0
+            });
+            sendTcpRetryAsync(2, new byte[][] {
+                abyte1
+            });
+            sendTcpRetryAsync(2, new byte[][] {
+                abyte2
+            });
+            sendTcpRetryAsync(2, new byte[][] {
+                abyte3
+            });
+            sendTcpRetryAsync(2, new byte[][] {
+                abyte4
+            });
+        }
+        isConnected = flag;
+        return flag;
+    }
+
+    public void sendDisconnectCommand()
+    {
+        sendUdp(new byte[][] {
+            new byte[] {
+                -128, 11
+            }
+        });
+        isConnected = false;
+    }
+
+    public boolean sendReconnectCommand()
+    {
+        boolean flag = sendTcpRetry(2, new byte[][] {
+            new byte[] {
+                -128, 10
+            }
+        });
+        isConnected = flag;
+        return flag;
+    }
+
+    public transient boolean sendTcp(boolean flag, byte abyte0[][])
+    {
+        SendTcpByteTask sendtcpbytetask;
+        try
+        {
+            sendtcpbytetask = new SendTcpByteTask();
+            commands_sent = 1 + commands_sent;
+        }
+        catch(Exception exception)
+        {
+            exception.printStackTrace();
+            return false;
+        }
+        if(!flag)
+            break MISSING_BLOCK_LABEL_38;
+        return ((Boolean)sendtcpbytetask.execute(abyte0).get()).booleanValue();
+        sendtcpbytetask.execute(abyte0);
+        return true;
+    }
+
+    public transient boolean sendTcpFeedback(Application application, int i, byte abyte0[][])
+    {
+        Boolean boolean1 = Boolean.valueOf(sendTcpRetry(i, abyte0));
+        UiHelper.hapticFeedback(boolean1, application);
+        return boolean1.booleanValue();
+    }
+
+    public transient boolean sendTcpFeedback(Application application, byte abyte0[][])
+    {
+        return sendTcpFeedback(application, 0, abyte0);
+    }
+
+    public transient boolean sendTcpRetry(int i, byte abyte0[][])
+    {
+        Boolean.valueOf(false);
+        int j = 0;
+        Boolean boolean1;
+        do
+        {
+            boolean1 = Boolean.valueOf(sendTcp(true, abyte0));
+            j++;
+        } while(!boolean1.booleanValue() && j < i + 1);
+        return boolean1.booleanValue();
+    }
+
+    public transient void sendTcpRetryAsync(final int mRetries, final byte mValues[][])
+    {
+        (new Thread() {
+
+            public void run()
+            {
+                sendTcpRetry(mRetries, mValues);
+            }
+
+            final NetworkHelper this$0;
+            final int val$mRetries;
+            final byte val$mValues[][];
+
+            
+            {
+                this$0 = NetworkHelper.this;
+                mRetries = i;
+                mValues = abyte0;
+                super();
+            }
+        }
+).start();
+    }
+
+    public transient void sendUdp(byte abyte0[][])
+    {
+        try
+        {
+            SendUdpByteTask sendudpbytetask = new SendUdpByteTask();
+            commands_sent = 1 + commands_sent;
+            sendudpbytetask.execute(abyte0);
+            return;
+        }
+        catch(Exception exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+
+    public static final int RECEIVE_TIMEOUT = 2000;
+    public static final int RETRIES = 2;
+    public static final int SEND_TIMEOUT = 700;
+    public static final String cmd_broadcast_string = "[cmd_broadcast]";
+    public static final byte cmd_command = -128;
+    public static final byte cmd_connect = 10;
+    public static final byte cmd_control = 14;
+    public static final byte cmd_disconnect = 11;
+    public static final String cmd_google_string = "[cmd_google]";
+    public static final String cmd_info_app_mode = "[cmd_19]";
+    public static final String cmd_info_app_name = "[cmd_17]";
+    public static final String cmd_info_app_version = "[cmd_18]";
+    public static final String cmd_info_device_name = "[cmd_15]";
+    public static final String cmd_info_device_osversion = "[cmd_16]";
+    public static final byte cmd_keyboard = 25;
+    public static final String cmd_keyboard_string = "[cmd_keyboard]";
+    public static final byte cmd_laser = 28;
+    public static final byte cmd_media = 20;
+    public static final byte cmd_media_launch[] = {
+        -128, 20, 7
+    };
+    public static final byte cmd_media_mute[] = {
+        -128, 20, 6
+    };
+    public static final byte cmd_media_next[] = {
+        -128, 20, 3
+    };
+    public static final byte cmd_media_play[] = {
+        -128, 20, 0
+    };
+    public static final byte cmd_media_prev[] = {
+        -128, 20, 2
+    };
+    public static final byte cmd_media_stop[] = {
+        -128, 20, 1
+    };
+    public static final byte cmd_media_voldown[] = {
+        -128, 20, 5
+    };
+    public static final byte cmd_media_volup[] = {
+        -128, 20, 4
+    };
+    public static final byte cmd_motion = 24;
+    public static final byte cmd_mouse = 21;
+    public static final byte cmd_mouse_down = 0;
+    public static final byte cmd_mouse_down_2 = 2;
+    public static final byte cmd_mouse_left_click = 11;
+    public static final byte cmd_mouse_left_down = 5;
+    public static final byte cmd_mouse_left_up = 6;
+    public static final byte cmd_mouse_move = 4;
+    public static final byte cmd_mouse_right_click = 12;
+    public static final byte cmd_mouse_right_down = 7;
+    public static final byte cmd_mouse_right_up = 8;
+    public static final byte cmd_mouse_scroll = 9;
+    public static final byte cmd_mouse_set = 10;
+    public static final byte cmd_mouse_up = 1;
+    public static final byte cmd_mouse_up_2 = 3;
+    public static final byte cmd_pause = 12;
+    public static final byte cmd_pointer = 22;
+    public static final byte cmd_pointer_calibrate = 3;
+    public static final byte cmd_pointer_end = 1;
+    public static final byte cmd_pointer_move = 2;
+    public static final byte cmd_pointer_start = 0;
+    public static final String cmd_process_string = "[cmd_process]";
+    public static final byte cmd_request = 27;
+    public static final byte cmd_request_connect[] = {
+        -128, 27, 3
+    };
+    public static final byte cmd_request_screen[] = {
+        -128, 27, 0
+    };
+    public static final byte cmd_request_screen_full[] = {
+        -128, 27, 1
+    };
+    public static final byte cmd_request_screen_next[] = {
+        -128, 27, 2
+    };
+    public static final byte cmd_resume = 13;
+    public static final byte cmd_scroll = 26;
+    public static final String cmd_scroll_string = "[cmd_scroll]";
+    public static final byte cmd_slideshow = 23;
+    public static final String cmd_slideshow_string = "[cmd_slide]";
+    public static final int port_data = 1927;
+    public static final int port_tcp = 1925;
+    public static final int port_udp = 1926;
+    public String app_ip;
+    public int commands_sent;
+    public boolean isConnected;
+    public String server_ip;
+
+
+}

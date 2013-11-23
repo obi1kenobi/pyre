@@ -1,0 +1,15 @@
+port: defaults to 9090 on mac, 9099 on windows, but it can be changed
+protocol: TCP
+
+define [SEP] = chr(0x1e)
+define [END] = chr(0x04)
+
+command formats:
+  move mouse by (-3, 5) (NOTE: |dx|, |dy| cannot exceed 50...also not measured in pixels...weird scaling factor): "MOVE[SEP]-3[SEP]5[SEP]0[END]"
+  left click, mouse down: "CLICK[SEP]L[SEP]D[SEP][END]"
+  left click, mouse up: "CLICK[SEP]L[SEP]U[SEP][END]"
+  right click, mouse down: "CLICK[SEP]R[SEP]D[SEP][END]"
+  right click, mouse up: "CLICK[SEP]R[SEP]U[SEP][END]"
+  press key: 
+  release key: 
+  press key combo: 

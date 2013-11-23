@@ -23,7 +23,6 @@ class MMLiteDriver:
     def _send(self, data):
         print "sending: " + data
         self._socket.sendall(data)
-        print 
 
     def left_click(self):
         self._send(SEP.join(["CLICK", "L", "D", END]))

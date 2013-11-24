@@ -23,9 +23,9 @@ def main():
 
     r = driver(ip)
 
-    tests = [test_ping,
+    tests = [test_powershell,
              test_open_url,
-             test_powershell]
+             test_ping]
 
     for run in tests:
         clean_environment(r)
@@ -42,11 +42,11 @@ Demonstrates that we can both open an arbitrary page in the default browser and
 use the browser itself by navigating to another page. F4 shortcut is IE-specific.
 """
 def test_open_url(r):
-    open_url("http://www.yahoo.com/", r)
+    open_url("http://www.yahoo.com/\n", r)
     sleep(1.5)
     r.press_action_key("F4")
     sleep(0.2)
-    r.type("www.google.com")
+    r.type("www.google.com\n")
     r.press_action_key('ENTER')
 
 """
@@ -56,7 +56,7 @@ execute it.
 def test_powershell(r):
     r.move_mouse(-2000,2000).left_click()
     sleep(0.5)
-    r.type('powershell')
+    r.type('powershell\n')
     r.press_action_key('ENTER')
     sleep(4)
     r.type('$c = new-object System.Net.WebClient\n') \
@@ -64,7 +64,8 @@ def test_powershell(r):
      .type('.\\Desktop\\BackImage.jpg\n')
 
 def test_ping(r):
-    r.ping()
+    r.left_click()
+    sleep(10)
 
 def open_url(website, r):
     r.move_mouse(-2000,2000).left_click()

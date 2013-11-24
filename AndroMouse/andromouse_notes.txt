@@ -4,7 +4,15 @@ protocol: UDP
 command formats:
   move mouse by (-3, 5): "-3x5yMVEX"
   left click: "click"
+  left click, mouse down: "lngclk"
+  left click, mouse up: "lngclu"
   right click: "rtclk"
-  press key: 
-  release key: 
-  press key combo: 
+  right click, mouse down: N/A
+  right click, mouse up: N/A
+  scroll wheel down: N/A
+  scroll wheel up: N/A
+  press key: ascii char
+  release key: automatic after press
+  press key combo: hold down shift by doing "ShiftKDwn", then press key, then release by doing "ShiftKU"
+  action keys:
+  

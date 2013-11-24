@@ -1,0 +1,10 @@
+port: 1925, 1926
+protocol: TCP, UDP
+encoding: ASCII
+
+command formats:
+  left click, mouse down: 3 bytes of [128, 21, 6] over TCP
+  left click, mouse up: 3 bytes of [128, 21, 5] over UDP
+  scroll wheel down: 5 bytes, [128, 21, 9, 0, Y_pos]
+  scroll wheel up: 5 bytes, [128, 21, 9, 0, Y_pos]
+  press key: "[cmd_keyboard]<kc>" where <kc> is key code

@@ -1,0 +1,13 @@
+Port: 1978
+protocol: TCP
+Encoding: UTF-8
+
+command formats:
+   move mouse by (-3, 5): "mos  6 m -3 5"
+   mouve mouse by (3, 5): "mos  5 m 3 5"
+   mouse click: "mos  1 c"
+   left click, mouse down: "mos 5 R l d"
+   left click, mouse up: "mos  5 R l u"
+   press utf8 key <kc>: "utf8 <kc>" where <kc> is key code
+   press other key <key> : "key  3 BAS" (backspace)
+   

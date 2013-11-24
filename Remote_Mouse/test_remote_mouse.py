@@ -2,7 +2,7 @@ import sys
 from remote_mouse_driver import RemoteMouseDriver as driver
 from time import sleep
 
-IP = "192.168.107.129"
+IP = "192.168.107.130"
 
 """
 Tests the Remote Mouse exploit driver by:

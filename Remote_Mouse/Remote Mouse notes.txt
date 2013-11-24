@@ -1,9 +1,21 @@
-port: 1978 for TCP, 2008 for UDP
-protocol: TCP default
+port: 1985 for miniweb, 1978 for server TCP, 2008 for UDP
+protocol: TCP for communication, UDP for auto-discovery
 encoding: ascii
 
+connection handshake:
+  when no auth required, server sends: "SIN 17win nop nopwd 210"
+    "win" presumably means "windows"
+    "nop" / "nopwd" mean no password authentication required
+    210 stands for version 2.10
+  when auth required, server sends: "SINxxxwin pwd <pwdmd5> 210"
+    "pwd" means password required
+    xxx is 3-digit length of rest of request
+    pwdmd5 is MD5 of password, not salted, as saved in registry
+
 command formats:
-  move mouse by (-3, 5): "mos  m -3 5"
+  3 char command prefix, followed by 3 char length (right-aligned, padded with spaces), followed by the command string
+
+  move mouse by (-3, 5): "mos<x>m -3 5" where <x> is the length of the command string, padded to 3 characters with spaces on the left
   left click, mouse down: "mos  5R l d"
   left click, mouse up: "mos  5R l u"
   middle click, mouse down: "mos  5R m d"
@@ -14,7 +26,7 @@ command formats:
   scroll wheel up: "mos  3w 1"
   press key: "key  SL" where L = "[ras]<kc>", <kc> is the ascii key code xor 53, and S = L.length
   release key: automatic after press
-  press key combo: "shift[+]c" to press Shift+C
+  press key combo: "key<x>shift[+]c" to press Shift+C, where <x> is the length of the command string
     modifier names: "shift", "alt", "ctrl", limit 1 per command
   action keys:
     "RTN" - enter
@@ -41,3 +53,7 @@ command formats:
     "F10"
     "F11"
     "F12"
+
+  vulnerability: miniweb on port 1985 will allow any user to view the My Pictures folder
+  vulnerability: QR code generation calls out to remote server over HTTP with internal IP address as parameter
+    an adversary may MITM the connection and insert a rogue QR code, making the victim connect and authenticate to a rogue server using plain text

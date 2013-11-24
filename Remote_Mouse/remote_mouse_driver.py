@@ -45,14 +45,43 @@ class RemoteMouseDriver:
     }
 
     SERVER_PORT = 1978
+    MOUSE_COMMAND_PREFIX = "mos"
+    KEY_COMMAND_PREFIX = "key"
+    PASSWORD_INPUT_PREFIX = "cin"
 
-    def __init__(self, ip):
-        self._output_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self._output_socket.connect((ip, RemoteMouseDriver.SERVER_PORT))
+    def __init__(self, ip, password=None):
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._socket.connect((ip, RemoteMouseDriver.SERVER_PORT))
+        self._socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, True)
+        self._execute_handshake(password)
 
-    def _send(self, data):
+    def _pad_length(self, length):
+        res = str(length)
+        while len(res) < 3:
+            res = ' ' + res
+        return res
+
+    def _execute_handshake(self, password=None):
+        info = self._socket.recv(1024)
+        print "received: ", info
+
+        tokens = info[6:].split(' ')
+        print "INFO: Version", tokens[-1]
+        if 'win' in tokens:
+            print "INFO: Windows server"
+        if 'pwd' in tokens:
+            print "INFO: Password required, MD5 hash ", tokens[-2]
+            if password == None:
+                raise ValueError('Connection to server requires password, but none was specified.')
+            else:
+                self._send(RemoteMouseDriver.PASSWORD_INPUT_PREFIX, password)
+        elif 'nopwd' in info:
+            print "INFO: No password required"
+
+    def _send(self, prefix, command):
+        data = prefix + self._pad_length(len(command)) + command
         print "sending: " + data
-        self._output_socket.sendall(data)
+        self._socket.sendall(data)
 
     def _get_char_code(self, c):
         if c in RemoteMouseDriver.TRANSLATION_TABLE:
@@ -63,33 +92,32 @@ class RemoteMouseDriver:
             return code
 
     def left_click(self):
-        self._send("mos  5R l d")
-        self._send("mos  5R l u")
+        self._send(RemoteMouseDriver.MOUSE_COMMAND_PREFIX, "R l d")
+        self._send(RemoteMouseDriver.MOUSE_COMMAND_PREFIX, "R l u")
         return self
 
     def right_click(self):
-        self._send("mos  5R r d")
-        self._send("mos  5R r u")
+        self._send(RemoteMouseDriver.MOUSE_COMMAND_PREFIX, "R r d")
+        self._send(RemoteMouseDriver.MOUSE_COMMAND_PREFIX, "R r u")
         return self
 
     def scroll_up(self):
-        self._send("mos  3w 1")
+        self._send(RemoteMouseDriver.MOUSE_COMMAND_PREFIX, "w 1")
         return self
 
     def scroll_down(self):
-        self._send("mos  3w 0")
+        self._send(RemoteMouseDriver.MOUSE_COMMAND_PREFIX, "w 0")
         return self
 
     def move_mouse(self, deltaX, deltaY):
-        self._send("mos  m " + str(deltaX) + " " + str(deltaY))
+        self._send(RemoteMouseDriver.MOUSE_COMMAND_PREFIX, "m " + str(deltaX) + " " + str(deltaY))
         return self
 
     def type(self, text):
-        format = "key  "
         code = None
         for c in text:
             code = self._get_char_code(c)
-            self._send(format + code)
+            self._send(RemoteMouseDriver.KEY_COMMAND_PREFIX, code)
         return self
 
     def press_action_key(self, name, shift=False, ctrl=False, alt=False):
@@ -114,5 +142,5 @@ class RemoteMouseDriver:
 
         command += RemoteMouseDriver.ACTION_KEYS[name]
 
-        self._send(command)
+        self._send(RemoteMouseDriver.KEY_COMMAND_PREFIX, command)
         return self

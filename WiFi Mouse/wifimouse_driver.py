@@ -39,6 +39,7 @@ class WifiMouseDriver:
         self._ip = ip
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.connect((ip, WifiMouseDriver.SERVER_PORT))
+        self._socket.setblocking(1)
 
     def _listen_for_replies(self):
         try:
@@ -54,7 +55,7 @@ class WifiMouseDriver:
 
 
     def left_click(self):
-        self._send("mos  1c")
+        self._send("mos  1c\n")
         return self
 
     def right_click(self):
@@ -79,13 +80,8 @@ class WifiMouseDriver:
 
         format = "key  "
         command = str(WifiMouseDriver.ACTION_KEYS[name])
-        self._send(format + str(len(command)) + " " + command)
+        self._send(format + str(len(command)) + command)
         return self
-
-    def ping(self):
-        format = "from:airhid"
-        self._send(format)
-        return self._listen_for_replies()
 
     def close(self):
         self._socket.close()

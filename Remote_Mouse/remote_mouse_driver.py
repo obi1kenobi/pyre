@@ -1,5 +1,6 @@
 import socket
 import string
+import hashlib
 
 class RemoteMouseDriver:
 
@@ -49,11 +50,11 @@ class RemoteMouseDriver:
     KEY_COMMAND_PREFIX = "key"
     PASSWORD_INPUT_PREFIX = "cin"
 
-    def __init__(self, ip, password=None):
+    def __init__(self, ip):
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.connect((ip, RemoteMouseDriver.SERVER_PORT))
         self._socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, True)
-        self._execute_handshake(password)
+        self._execute_handshake()
 
     def _pad_length(self, length):
         res = str(length)
@@ -61,20 +62,26 @@ class RemoteMouseDriver:
             res = ' ' + res
         return res
 
-    def _execute_handshake(self, password=None):
+    def _execute_handshake(self):
         info = self._socket.recv(1024)
-        print "received: ", info
+        print "received:", info
 
         tokens = info[6:].split(' ')
         print "INFO: Version", tokens[-1]
         if 'win' in tokens:
             print "INFO: Windows server"
         if 'pwd' in tokens:
-            print "INFO: Password required, MD5 hash ", tokens[-2]
-            if password == None:
-                raise ValueError('Connection to server requires password, but none was specified.')
-            else:
-                self._send(RemoteMouseDriver.PASSWORD_INPUT_PREFIX, password)
+            hash_challenge = tokens[-2].strip()
+            print "INFO: Password required, challenge MD5 hash", hash_challenge
+
+            # take hash challenge in hex, reverse it and hash it with md5 (no salt)
+            # this is the response to the challenge
+            h = hashlib.new('md5')
+            h.update(hash_challenge[::-1])
+            response = h.hexdigest()
+
+            print "INFO: Sending computed response", response
+            self._send(RemoteMouseDriver.PASSWORD_INPUT_PREFIX, response)
         elif 'nopwd' in info:
             print "INFO: No password required"
 

@@ -7,10 +7,14 @@ connection handshake:
     "win" presumably means "windows"
     "nop" / "nopwd" mean no password authentication required
     210 stands for version 2.10
-  when auth required, server sends: "SINxxxwin pwd <pwdmd5> 210"
+  when auth required, server sends: "SINxxxwin pwd <md5> 210"
     "pwd" means password required
     xxx is 3-digit length of rest of request
     pwdmd5 is MD5 of password, not salted, as saved in registry
+    response to the challenge is the received md5 (in hex), reversed, and hashed with md5 again
+    response format is: cinxxx<ans>
+    xxx is 3-digit length
+    <ans> is the response to the challenge as described above
 
 command formats:
   3 char command prefix, followed by 3 char length (right-aligned, padded with spaces), followed by the command string

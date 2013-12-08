@@ -1,6 +1,8 @@
 port: defaults to 8888, but I believe it can be changed
 protocol: UDP
 
+even if password is set, the server will accept button / key presses
+
 command formats:
   move mouse by (-3, 5): "-3x5yMVEX"
   left click: "click"

@@ -3,6 +3,43 @@ import string
 
 class AndroMouseDriver:
 
+    TAB = "TabKey"
+    ENTER = "EnterKey"
+    BACK_SPACE = "\b"
+
+    ACTION_KEYS = {
+        'TAB': TAB,
+        'ENTER': ENTER,
+        'ESCAPE': "EscKey",
+        'PAGE_UP': "PgupKey",
+        'PAGE_DOWN': "PgdownKey",
+        'END': "EndKey",
+        'HOME': "HomeKey",
+        'LEFT': "LeftKey",
+        'UP': "UpKey",
+        'RIGHT': "RightKey",
+        'DOWN': "DownKey",
+        'BACK_SPACE': BACK_SPACE,
+        'F1': "F1Key",
+        'F2': "F2Key",
+        'F3': "F3Key",
+        'F4': "F4Key",
+        'F5': "F5Key",
+        'F6': "F6Key",
+        'F7': "F7Key",
+        'F8': "F8Key",
+        'F9': "F9Key",
+        'F10': "F10Key",
+        'F11': "F11Key",
+        'F12': "F12Key"
+    }
+
+    TRANSLATION_TABLE = {
+        '\n': ENTER,
+        '\b': BACK_SPACE,
+        '\t': TAB
+    }
+
     def __init__(self, ip, port):
         self._ip = ip
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -33,10 +70,18 @@ class AndroMouseDriver:
                 self._send(";")
                 self._send("ShiftKU")
             else:
+                if c in AndroMouseDriver.TRANSLATION_TABLE:
+                    c = AndroMouseDriver.TRANSLATION_TABLE[c]
                 self._send(c)
         return self
 
-    def press_action_key(self, key, shift=False, ctrl=False, alt=False):
+    def press_action_key(self, name, shift=False, ctrl=False, alt=False):
+        code = None
+        if name in AndroMouseDriver.ACTION_KEYS:
+            code = AndroMouseDriver.ACTION_KEYS[name]
+        else:
+            code = name
+
         if shift:
             self._send("ShiftKDwn")
         if ctrl:
@@ -44,7 +89,7 @@ class AndroMouseDriver:
         if alt:
             self._send("AltKDwn")
 
-        self._send(key)
+        self._send(code)
 
         if shift:
             self._send("ShiftKU")

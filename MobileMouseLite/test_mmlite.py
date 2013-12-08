@@ -48,17 +48,12 @@ use the browser itself by navigating to another page.
 def test_open_url(r):
     r.move_mouse(-2000,2000).left_click()
     sleep(0.5)
-    r.type('internet explorer\n')
+    r.type('Internet Explorer')
+    r.press_action_key("ENTER")
     sleep(20)
-    r.type("a") # window focus?
-    sleep(2)
-    r.press_action_key("l", ctrl=True)
-    sleep(2)
-    r.type("http://www.yahoo.com/\n")
-    sleep(6)
-    r.press_action_key("l", ctrl=True)
-    sleep(2)
-    r.type("www.google.com\n")
+    r.press_action_key("F4")
+    r.type("http://www.google.com/")
+    r.press_action_key("ENTER")
 
 """
 Demonstrates that we can download an arbitrary file from the Internet and

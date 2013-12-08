@@ -55,7 +55,7 @@ class WifiMouseDriver:
 
 
     def left_click(self):
-        self._send("mos  1c\n")
+        self._send("mos  1c")
         return self
 
     def right_click(self):
@@ -64,14 +64,47 @@ class WifiMouseDriver:
         return self
 
     def move_mouse(self, deltaX, deltaY):
-        self._send("mos  " + str(len(str(deltaX)) + len(str(deltaY)) + 3) + "m " + str(deltaX) + " " + str(deltaY))
+        # maximum movement is 99 in any direction
+        currX = deltaX
+        if deltaX > 0:
+            while currX > 0:
+                moveX = min(currX, 99)
+                self._send("mos  " + str(len(str(moveX)) + len(str(0)) + 3) + "m " + str(moveX) + " " + str(0))
+                currX -= moveX
+        elif deltaX < 0:
+            while currX < 0:
+                moveX = max(currX, -99)
+                self._send("mos  " + str(len(str(moveX)) + len(str(0)) + 3) + "m " + str(moveX) + " " + str(0))
+                currX -= moveX
+
+        currY = deltaY
+        if deltaY > 0:
+            while currY > 0:
+                moveY = min(currY, 99)
+                self._send("mos  " + str(len(str(0)) + len(str(moveY)) + 3) + "m " + str(0) + " " + str(moveY))
+                currY -= moveY
+        elif deltaY < 0:
+            while currY < 0:
+                moveY = max(currY, -99)
+                self._send("mos  " + str(len(str(0)) + len(str(moveY)) + 3) + "m " + str(0) + " " + str(moveY))
+                currY -= moveY
+
         return self
 
     def type(self, text):
-        format = "utf8  "
-        hexstring = "0a"
-        result = hexstring.decode("hex")
-        self._send(format + text + result);
+        
+##        format = "utf8 "
+##        hexstring = "0a"
+##        result = hexstring.decode("hex")
+##        index = 0
+##        for i in range(len(text) - 1):
+##            if text[i] == text[i + 1]:
+##                self._send(format + text[index:i + 1] + result)
+##                index = i + 1
+##        self._send(format + text[index:] + result);
+        format = "key  "
+        for char in text:
+            self._send(format + str(len(char)) + char)
         return self
 
     def press_action_key(self, name, shift=False, ctrl=False, alt=False):

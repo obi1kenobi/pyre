@@ -3,7 +3,7 @@ from mmlite_driver import MMLiteDriver as driver
 from time import sleep
 
 IP = "172.16.78.131"
-PORT = 9099
+PORT = 9113
 
 """
 Tests the MobileMouseLite exploit driver by:
@@ -26,6 +26,8 @@ def main():
 
     tests = [test_open_url,
              test_powershell]
+
+    r.connect()
 
     sleep(2)
 

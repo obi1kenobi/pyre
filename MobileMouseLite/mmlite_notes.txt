@@ -1,7 +1,10 @@
 port: defaults to 9090 on mac, 9099 on windows, but it can be changed
 protocol: TCP
 
-client sends password over to server in plaintext
+1. client sends password over to server in plaintext
+2. When you try to establish a connection with the server, the packet responds with something like 
+CONNECTED[EOR]YES[EOR]MAC (meaning mac the OS)[EOR]MYMACBOOKAIR[EOR]WELCOME (or any random message)[EOR]33:44:55:FF:AA:BB (MAC ADDRESS)[EOR]
+After that message, it seems there's still some additional information (like OS version), but the client doesn't seem to process it.
 
 define [SEP] = chr(0x1e)
 define [END] = chr(0x04)

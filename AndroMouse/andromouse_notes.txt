@@ -1,7 +1,10 @@
 port: defaults to 8888, but I believe it can be changed
 protocol: UDP
 
-even if password is set, the server will accept button / key presses
+1. even if password is set, the server will accept button / key presses
+2. nevertheless, if user specifies password, you can get it by establishing TCP connection and sending "AMPASSCHECK\n". Server will respond with:
+
+AMServPass:passwordhere\x0d\x0aAMServer: AMPASSCHECK\x0d\x0a
 
 command formats:
   move mouse by (-3, 5): "-3x5yMVEX"

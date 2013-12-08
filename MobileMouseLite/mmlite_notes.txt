@@ -1,6 +1,8 @@
 port: defaults to 9090 on mac, 9099 on windows, but it can be changed
 protocol: TCP
 
+client sends password over to server in plaintext
+
 define [SEP] = chr(0x1e)
 define [END] = chr(0x04)
 

@@ -92,16 +92,6 @@ class WifiMouseDriver:
         return self
 
     def type(self, text):
-        
-##        format = "utf8 "
-##        hexstring = "0a"
-##        result = hexstring.decode("hex")
-##        index = 0
-##        for i in range(len(text) - 1):
-##            if text[i] == text[i + 1]:
-##                self._send(format + text[index:i + 1] + result)
-##                index = i + 1
-##        self._send(format + text[index:] + result);
         format = "key  "
         for char in text:
             self._send(format + str(len(char)) + char)

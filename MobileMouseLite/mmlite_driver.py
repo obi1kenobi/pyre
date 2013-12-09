@@ -1,10 +1,11 @@
 import socket
 import string
+from driver import driver
 
 SEP = chr(0x1e)
 END = chr(0x04)
 
-class MMLiteDriver:
+class MMLiteDriver(driver):
 
     TAB = "TAB"
     ENTER = "ENTER"

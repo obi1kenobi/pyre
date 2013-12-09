@@ -1,8 +1,9 @@
 import socket
 import string
 from time import sleep
+from driver import driver
 
-class RemoteControlCollectionDriver:
+class RemoteControlCollectionDriver(driver):
 
     RCC_ESC = "<esc>"
     RCC_TAB = "<tab>"

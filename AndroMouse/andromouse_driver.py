@@ -1,7 +1,8 @@
 import socket
 import string
+from driver import driver
 
-class AndroMouseDriver:
+class AndroMouseDriver(driver):
 
     TAB = "TabKey"
     ENTER = "EnterKey"
@@ -44,6 +45,9 @@ class AndroMouseDriver:
         self._ip = ip
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._port = port
+
+    def close(self):
+        self._socket.close()
 
     def _send(self, data):
         print "sending: " + data

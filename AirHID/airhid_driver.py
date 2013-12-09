@@ -1,7 +1,8 @@
 import socket
 import string
+from driver import driver
 
-class AirHidDriver:
+class AirHidDriver(driver):
 
     SHIFT = "_SHIFT"
     ALT = "_ALT"
@@ -156,6 +157,10 @@ class AirHidDriver:
         self._input_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._input_socket.settimeout(2)
         self._input_socket.bind(('', AirHidDriver.INPUT_PORT))
+
+    def close(self):
+        self._output_socket.close()
+        self._input_socket.close()
 
     def _listen_for_replies(self):
         try:

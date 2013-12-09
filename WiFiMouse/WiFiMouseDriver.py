@@ -1,7 +1,8 @@
 import socket
 import string
+from driver import driver
 
-class WifiMouseDriver:
+class WiFiMouseDriver(driver):
 
     ACTION_KEYS = {
         'TAB': 'TAB',
@@ -38,7 +39,7 @@ class WifiMouseDriver:
     def __init__(self, ip):
         self._ip = ip
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._socket.connect((ip, WifiMouseDriver.SERVER_PORT))
+        self._socket.connect((ip, WiFiMouseDriver.SERVER_PORT))
         self._socket.setblocking(1)
 
     def _send(self, data):
@@ -90,11 +91,11 @@ class WifiMouseDriver:
         return self
 
     def press_action_key(self, name, shift=False, ctrl=False, alt=False):
-        if name not in WifiMouseDriver.ACTION_KEYS:
+        if name not in WiFiMouseDriver.ACTION_KEYS:
             raise ValueError('Unknown action key name: %s' % name)
 
         format = "key  "
-        command = str(WifiMouseDriver.ACTION_KEYS[name])
+        command = str(WiFiMouseDriver.ACTION_KEYS[name])
         self._send(format + str(len(command)) + command)
         return self
 

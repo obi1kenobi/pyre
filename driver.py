@@ -1,4 +1,5 @@
-## Superclass for all exploit drivers
+## Superclass for all exploit drivers, all drivers must implement these functions
+## To work with the known exploits
 class driver:
     def __init__(self, ip):
         raise NotImplementedError

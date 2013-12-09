@@ -44,20 +44,23 @@ class MMLiteDriver(driver):
         '\t': TAB
     }
 
-    def __init__(self, ip, port):
-        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._socket.connect((ip, port))
+    SERVER_PORT = 9090
 
-    def connect(self):
+    def __init__(self, ip):
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._socket.connect((ip, MMLiteDriver.SERVER_PORT))
+        self._connect()
+
+    def close(self):
+        self._socket.close()
+
+    def _connect(self):
         # connect_hex says something along the lines of "CONNECT[SEP][SEP]ANDROID[SEP]ANDROID[SEP]2.0.6[SEP]0[END]"
         connect_hex = [0x43, 0x4f, 0x4e, 0x4e, 0x45, 0x43, 0x54, 0x1e, 0x1e, 0x41, 0x6e, 0x64, 0x72, 0x6f, 0x69, 0x64, 0x1e, 0x41, 0x6e, 0x64, 0x72, 0x6f, 0x69, 0x64, 0x1e, 0x32, 0x2e, 0x30, 0x2e, 0x36, 0x1e, 0x30, 0x04]
         s = ''
         for num in connect_hex:
             s += chr(num)
         self._send(s)
-
-    def close(self):
-        self._socket.close()
 
     def _send(self, data):
         print "sending: " + data

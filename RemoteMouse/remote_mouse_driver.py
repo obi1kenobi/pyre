@@ -59,7 +59,7 @@ class RemoteMouseDriver(driver):
         self._execute_handshake()
 
     def close(self):
-	self._socket.close()
+        self._socket.close()
 
     def _pad_length(self, length):
         res = str(length)

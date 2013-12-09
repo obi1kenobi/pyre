@@ -41,10 +41,12 @@ class AndroMouseDriver(driver):
         '\t': TAB
     }
 
-    def __init__(self, ip, port):
+    SERVER_PORT = 8888
+
+    def __init__(self, ip):
         self._ip = ip
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self._port = port
+        self._port = AndroMouseDriver.SERVER_PORT
 
     def close(self):
         self._socket.close()

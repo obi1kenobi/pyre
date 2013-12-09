@@ -61,7 +61,7 @@ class AndroMouseDriver:
         self._send(str(deltaX) + "x" + str(deltaY) + "y" + "MVEX")
         return self
 
-    def type(self, text):
+    def typeText(self, text):
         for c in text:
             # special cases
             if c == ":":

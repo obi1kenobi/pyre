@@ -41,14 +41,6 @@ class WifiMouseDriver:
         self._socket.connect((ip, WifiMouseDriver.SERVER_PORT))
         self._socket.setblocking(1)
 
-    def _listen_for_replies(self):
-        try:
-            data, addr = self._input_socket.recvfrom(1024)
-            print "%s replied: %s" % (addr, data)
-            return True
-        except:
-            return False
-
     def _send(self, data):
         print "sending: " + data
         self._socket.send(data)
@@ -91,7 +83,7 @@ class WifiMouseDriver:
 
         return self
 
-    def type(self, text):
+    def typeText(self, text):
         format = "key  "
         for char in text:
             self._send(format + str(len(char)) + char)

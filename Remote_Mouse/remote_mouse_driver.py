@@ -120,7 +120,7 @@ class RemoteMouseDriver:
         self._send(RemoteMouseDriver.MOUSE_COMMAND_PREFIX, "m " + str(deltaX) + " " + str(deltaY))
         return self
 
-    def type(self, text):
+    def typeText(self, text):
         code = None
         for c in text:
             code = self._get_char_code(c)

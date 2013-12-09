@@ -214,7 +214,7 @@ class AirHidDriver:
         self._send("url." + url)
         return self
 
-    def type(self, text):
+    def typeText(self, text):
         format = "cmd."
         code = None
         for c in text:

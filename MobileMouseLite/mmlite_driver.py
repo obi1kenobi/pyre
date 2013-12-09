@@ -100,7 +100,7 @@ class MMLiteDriver:
 
         return self
 
-    def type(self, text):
+    def typeText(self, text):
         for c in text:
             if c in MMLiteDriver.TRANSLATION_TABLE:
                 c = MMLiteDriver.TRANSLATION_TABLE[c]

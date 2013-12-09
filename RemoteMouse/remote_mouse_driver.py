@@ -1,8 +1,10 @@
 import socket
 import string
 import hashlib
+from time import sleep
+from driver import driver
 
-class RemoteMouseDriver:
+class RemoteMouseDriver(driver):
 
     SHIFT = "shift"
     CTRL = "ctrl"
@@ -55,6 +57,9 @@ class RemoteMouseDriver:
         self._socket.connect((ip, RemoteMouseDriver.SERVER_PORT))
         self._socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, True)
         self._execute_handshake()
+
+    def close(self):
+	self._socket.close()
 
     def _pad_length(self, length):
         res = str(length)
@@ -125,6 +130,7 @@ class RemoteMouseDriver:
         for c in text:
             code = self._get_char_code(c)
             self._send(RemoteMouseDriver.KEY_COMMAND_PREFIX, code)
+	    sleep(0.1)
         return self
 
     def press_action_key(self, name, shift=False, ctrl=False, alt=False):

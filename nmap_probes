@@ -1,0 +1,24 @@
+##############################NEXT PROBE##############################
+# Add these probes to nmap's nmap-service-probes file
+probe TCP NULL q||
+
+# Add these matches to the default NULL probe
+match AndroMouse m|^AMServer$|s p/AndroMouse/
+match RemoteMouse m|^SIN 17osx nop nopwd \d+$|s p/Remote Mouse/ i/OS X/
+match RemoteMouse m|^SIN 17win nop nopwd \d+$|s p/Remote Mouse/ i/Windows/
+match wifi-mouse m|^system\x20mac\x2010\.9\nversion\x201\.5\.0\.0\n$|s p/WiFi Mouse/ i/OS X/
+match wifi-mouse m|^system\x20windows\x206\.1\nversion\x201\.\x205\.\x200\.\x200\n$|s p/WiFi Mouse/ i/Windows/
+match wifi-mouse m|^system\x20linux\x2010\.0\.4\nversion\x201\.\x205\.\x200\.\x200\n$|s p/WiFi Mouse/ i/Linux/
+
+##############################NEXT PROBE##############################
+Probe UDP AndroMouse q|AMSNIFF|
+rarity 9
+ports 8888
+
+match AndroMouse m|^GOTBACK$|s p/AndroMouse/
+##############################NEXT PROBE##############################
+Probe UDP AirHID q|from:airhid|
+rarity 9
+ports 13246
+
+match AirHID m|^andReceiver-\d+\.\d+\.\d+$|s p/AirHID/
